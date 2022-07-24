@@ -7,7 +7,7 @@ import (
 )
 
 func NewRouter() *gin.Engine {
-	router := gin.New()
+	router := gin.Default()
 
 	router.GET("/", func(c *gin.Context) {
 		c.JSON(200, gin.H{"status": "ok"})
@@ -18,7 +18,13 @@ func NewRouter() *gin.Engine {
 		activityGroup := v1.Group("activity")
 		{
 			activity := new(controllers.ActivityController)
+
 			activityGroup.GET("/latest", activity.RetrieveLatest)
+		}
+		statisticsGroup := v1.Group("statistics")
+		{
+			statistics := new(controllers.StatisticsController)
+			statisticsGroup.GET("/", statistics.Retrieve)
 		}
 	}
 

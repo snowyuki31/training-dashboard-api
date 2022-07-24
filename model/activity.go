@@ -1,11 +1,61 @@
 package model
 
+import (
+	"encoding/xml"
+	"io/ioutil"
+	"snowyuki31/training-dashboard-api/utils"
+)
+
+type UnitData struct {
+	Time      string  `xml:"Time" json:"time"`
+	HeartRate int32   `xml:"HeartRateBpm>Value" json:"heart_rate"`
+	Cadence   int32   `xml:"Cadence" json:"cadence"`
+	Speed     float32 `xml:"Extensions>TPX>Speed" json:"speed"`
+	Watts     int32   `xml:"Extensions>TPX>Watts" json:"watts"`
+}
+
 type Activity struct {
-	Trackpoint []struct {
-		Time      string  `xml:"Time" json:"time"`
-		HeartRate int64   `xml:"HeartRateBpm>Value" json:"heart_rate"`
-		Cadence   int64   `xml:"Cadence" json:"cadence"`
-		Speed     float64 `xml:"Extensions>TPX>Speed" json:"speed"`
-		Watts     int64   `xml:"Extensions>TPX>Watts" json:"watts"`
-	} `xml:"Activities>Activity>Lap>Track>Trackpoint" json:"trackpoint"`
+	Trackpoint []UnitData `xml:"Activities>Activity>Lap>Track>Trackpoint" json:"trackpoint"`
+}
+
+func LoadData(id string) (data Activity) {
+	raw, _ := ioutil.ReadFile("data/activity_" + id + ".tcx")
+
+	err := xml.Unmarshal(raw, &data)
+	if err != nil {
+		panic(err)
+	}
+
+	return
+}
+
+func (a Activity) CalcMean() UnitData {
+	tp := a.Trackpoint
+
+	var hr, cd, wt int32
+	var sp float32
+	for _, v := range tp {
+		hr += v.HeartRate
+		cd += v.Cadence
+		sp += v.Speed
+		wt += v.Watts
+	}
+	l := int32(len(tp))
+
+	return UnitData{Time: "-", HeartRate: hr / l, Cadence: cd / l, Speed: sp / (float32(l)), Watts: wt / l}
+}
+
+func (a Activity) CalcMax() UnitData {
+	tp := a.Trackpoint
+
+	var hr, cd, wt int32
+	var sp float32
+	for _, v := range tp {
+		utils.Chmax(&hr, v.HeartRate)
+		utils.Chmax(&cd, v.Cadence)
+		utils.Chmax(&sp, v.Speed)
+		utils.Chmax(&wt, v.Watts)
+	}
+
+	return UnitData{Time: "-", HeartRate: hr, Cadence: cd, Speed: sp, Watts: wt}
 }

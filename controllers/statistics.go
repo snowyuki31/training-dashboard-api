@@ -3,7 +3,7 @@ package controllers
 import (
 	"net/http"
 
-	"snowyuki31/training-dashboard-api/service"
+	"snowyuki31/training-dashboard-api/model"
 
 	"github.com/gin-gonic/gin"
 )
@@ -12,9 +12,7 @@ type StatisticsController struct{}
 
 func (s StatisticsController) Retrieve(c *gin.Context) {
 
-	statisticsService := service.StatisticsService{}
-
-	statistics := statisticsService.GetStatistics()
+	statistics := model.GetStatistics()
 
 	c.JSON(http.StatusOK, statistics)
 

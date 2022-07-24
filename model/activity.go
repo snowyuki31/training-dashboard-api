@@ -1,6 +1,7 @@
 package model
 
 type Activity struct {
+	Id         string `xml:"Activities>Activity" json:"id"`
 	Trackpoint []struct {
 		Time      string  `xml:"Time" json:"time"`
 		HeartRate int64   `xml:"HeartRateBpm>Value" json:"heart_rate"`

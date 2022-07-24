@@ -7,7 +7,7 @@ import (
 )
 
 func NewRouter() *gin.Engine {
-	router := gin.New()
+	router := gin.Default()
 
 	router.GET("/", func(c *gin.Context) {
 		c.JSON(200, gin.H{"status": "ok"})

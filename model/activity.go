@@ -7,5 +7,5 @@ type Activity struct {
 		Cadence   int64   `xml:"Cadence" json:"cadence"`
 		Speed     float64 `xml:"Extensions>TPX>Speed" json:"speed"`
 		Watts     int64   `xml:"Extensions>TPX>Watts" json:"watts"`
-	} `xml:"Activities>Activity>Lap>Track>Trackpoint"`
+	} `xml:"Activities>Activity>Lap>Track>Trackpoint" json:"trackpoint"`
 }

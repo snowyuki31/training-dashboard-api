@@ -8,9 +8,9 @@ import (
 
 type ActivityService struct{}
 
-func (ActivityService) LoadData() model.Activity {
+func (ActivityService) LoadData(id string) model.Activity {
 	var data model.Activity
-	raw, _ := ioutil.ReadFile(`data/activity_9246957399.tcx`)
+	raw, _ := ioutil.ReadFile("data/activity_" + id + ".tcx")
 
 	err := xml.Unmarshal(raw, &data)
 	if err != nil {

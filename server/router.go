@@ -18,8 +18,8 @@ func NewRouter() *gin.Engine {
 		activityGroup := v1.Group("activity")
 		{
 			activity := new(controllers.ActivityController)
-
-			activityGroup.GET("/latest", activity.RetrieveLatest)
+			activityGroup.GET("/:id", activity.Retrieve)
+			activityGroup.GET("/list", activity.ActivityList)
 		}
 		statisticsGroup := v1.Group("statistics")
 		{

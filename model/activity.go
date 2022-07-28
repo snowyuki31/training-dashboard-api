@@ -10,11 +10,12 @@ type UnitData struct {
 	Time      string  `xml:"Time" json:"time"`
 	HeartRate int32   `xml:"HeartRateBpm>Value" json:"heart_rate"`
 	Cadence   int32   `xml:"Cadence" json:"cadence"`
-	Speed     float32 `xml:"Extensions>TPX>Speed" json:"speed"`
+	Speed     float64 `xml:"Extensions>TPX>Speed" json:"speed"`
 	Watts     int32   `xml:"Extensions>TPX>Watts" json:"watts"`
 }
 
 type Activity struct {
+	Id         string     `xml:"Activities>Activity>Id" json:"id"`
 	Trackpoint []UnitData `xml:"Activities>Activity>Lap>Track>Trackpoint" json:"trackpoint"`
 }
 
@@ -33,7 +34,7 @@ func (a Activity) CalcMean() UnitData {
 	tp := a.Trackpoint
 
 	var hr, cd, wt int32
-	var sp float32
+	var sp float64
 	for _, v := range tp {
 		hr += v.HeartRate
 		cd += v.Cadence
@@ -42,14 +43,14 @@ func (a Activity) CalcMean() UnitData {
 	}
 	l := int32(len(tp))
 
-	return UnitData{Time: "-", HeartRate: hr / l, Cadence: cd / l, Speed: sp / (float32(l)), Watts: wt / l}
+	return UnitData{Time: "-", HeartRate: hr / l, Cadence: cd / l, Speed: sp / (float64(l)), Watts: wt / l}
 }
 
 func (a Activity) CalcMax() UnitData {
 	tp := a.Trackpoint
 
 	var hr, cd, wt int32
-	var sp float32
+	var sp float64
 	for _, v := range tp {
 		utils.Chmax(&hr, v.HeartRate)
 		utils.Chmax(&cd, v.Cadence)
@@ -58,4 +59,10 @@ func (a Activity) CalcMax() UnitData {
 	}
 
 	return UnitData{Time: "-", HeartRate: hr, Cadence: cd, Speed: sp, Watts: wt}
+}
+
+func (a Activity) CalcMetric() Metric {
+	tp := a.Trackpoint
+
+	return CalcMetric(&tp, 225)
 }

@@ -16,8 +16,9 @@ func (a ActivityController) Retrieve(c *gin.Context) {
 	activity := model.LoadData(id)
 	mean := activity.CalcMean()
 	max := activity.CalcMax()
+	metric := activity.CalcMetric()
 
-	c.JSON(http.StatusOK, gin.H{"activity": activity.Trackpoint, "mean": mean, "max": max})
+	c.JSON(http.StatusOK, gin.H{"id": activity.Id, "activity": activity.Trackpoint, "mean": mean, "max": max, "metric": metric})
 }
 
 func (a ActivityController) ActivityList(c *gin.Context) {

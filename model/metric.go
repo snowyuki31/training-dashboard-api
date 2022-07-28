@@ -3,7 +3,17 @@ package model
 import "math"
 
 type Metric struct {
-	NP int32 `json:"np"`
+	NP  int32   `json:"np"`
+	IF  float64 `json:"if"`
+	TSS int32   `json:"tss"`
+}
+
+func CalcMetric(tp *[]UnitData, FTP int32) (m Metric) {
+	NP := CalcNP(tp)
+	IF := float64(NP) / float64(FTP)
+	TSS := int32(float64(len(*tp)) * float64(NP) * IF * 100.0 / (float64(FTP) * 3600.0))
+	m = Metric{NP: NP, IF: IF, TSS: TSS}
+	return
 }
 
 /*
@@ -34,7 +44,7 @@ func CalcNP(tp *[]UnitData) int32 {
 }
 
 /*
-	並行処理版
+	NP計算の並行処理版(60*60くらいのサイズのデータでは遅い．．．)
 */
 func ParallelCalcNP(tp *[]UnitData, con int) int32 {
 	// 30の倍数の長さのブロックで分割

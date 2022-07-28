@@ -64,8 +64,5 @@ func (a Activity) CalcMax() UnitData {
 func (a Activity) CalcMetric() Metric {
 	tp := a.Trackpoint
 
-	// Calculate NP (Normalized Power)
-	np := CalcNP(&tp)
-
-	return Metric{NP: np}
+	return CalcMetric(&tp, 225)
 }
